@@ -8,4 +8,10 @@ html
         script(defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js")
 
     body
-        block content
+        #app
+            block content
+
+        // SCRIPTS
+        block scripts
+            script.
+                console.log('template!');
