@@ -1,0 +1,25 @@
+{
+  "name": "hackathon2018",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gmanjames/Hackathon2018.git"
+  },
+  "author": "Garren Ijames",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gmanjames/Hackathon2018/issues"
+  },
+  "homepage": "https://github.com/gmanjames/Hackathon2018#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "env": "0.0.2",
+    "express": "^4.16.2",
+    "pug": "^2.0.1"
+  }
+}
