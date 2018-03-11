@@ -3,3 +3,10 @@ extends master2018.pug
 block content
     include ../includes/nav.pug
 
+append scripts
+    script.
+
+        document.querySelector('.navbar-brand').addEventListener('click', evt => {
+            document.querySelector('.navbar-burger').classList.toggle('is-active');
+            document.querySelector('.navbar-menu').classList.toggle('is-active');
+        });

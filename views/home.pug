@@ -3,4 +3,14 @@ extends layouts/profile.pug
 append content
     section.section
         .container
-            h1.title Hello #{ username }
+            .columns.is-centered
+                .column.is-two-thirds
+                    h1.title Hello #{ username }
+                    form(action="/profile/post" method="POST")
+                        .field
+                            label(for="content") Post something
+                            .control
+                                textarea.textarea(name="content")
+                        .field
+                            .control
+                                button.button.is-link(type="submit") Submit

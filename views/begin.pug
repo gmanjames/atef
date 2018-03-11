@@ -1,37 +1,38 @@
 extends layouts/master2018.pug
 
 block content
+    section.section
+        .container
+            .columns.is-centered
+                .column.is-one-third.content
+                    h1 Begin
+                    form(action="/login", method="POST")
+                        .field
+                            label(for="username") username
+                            .control
+                                input.input(type="text" name="username")
+                        .field
+                            label(for="password") password
+                            .control
+                                input.input(type="password" name="password")
+                        .field
+                            .control
+                                button.button.is-link(type="submit") Submit
+                    p Don't have an account? #[a(href="/register") Register]
+                
 
-    .columns.is-centered
-        .column.is-one-third
-            h1 Begin
-            form(action="/login", method="POST")
-                .field
-                    label(for="username") username
-                    .control
-                        input.input(type="text" name="username")
-                .field
-                    label(for="password") password
-                    .control
-                        input.input(type="password" name="password")
-                .field
-                    .control
-                        button.button.is-link(type="submit") Submit
-            p Don't have an account? #[a(href="/register") Register]
-        
-
-    #beginModel.modal.is-active
-        .modal-background
-        .modal-content
-            .modal-card
-                .modal-card-head
-                    h1.modal-card-title Welcome.
-                .modal-card-body
-                    .content
-                        p.
-                            You are going to be here for a while so you might as well read this.
-                        h2#countdown 
-                .modal-card-foot
+            #beginModel.modal.is-active
+                .modal-background
+                .modal-content
+                    .modal-card
+                        .modal-card-head
+                            h1.modal-card-title Welcome.
+                        .modal-card-body
+                            .content
+                                p.
+                                    You are going to be here for a while so you might as well read this.
+                                h2#countdown 
+                        .modal-card-foot
 
 block scripts
     script.

@@ -27,6 +27,22 @@ router.get("/users", (req, res) => {
     });
 });
 
+router.get("/feed", (req, res) => {
+    dao.allPosts().then(results => {
+        res.render("feed", { posts: results });
+    }).catch(errors => {
+        res.send('An error occurred: ' + errors);
+    });
+});
+
+router.post("/post", (req, res) => {
+    dao.savePost(req.session.username, req.body.content).then(results => {
+        res.redirect("/profile/feed");
+    }).catch(errors => {
+        res.send('An error occurred: ' + errors);
+    });
+});
+
 
 // MIDDLEWARE
 function auth(req, res, next) {

@@ -2,6 +2,11 @@ extends layouts/profile.pug
 
 append content
     section.section
-        .container #{ JSON.stringify(users) }
+        .container
+            .columns.is-centered
+                .column.is-one-third
+                    ul
+                        each user in users
+                            li #{ user.username }
 
 

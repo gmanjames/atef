@@ -1,0 +1,16 @@
+extends layouts/profile.pug
+
+append content
+    section.section
+        .container
+            .columns.is-centered
+                .column.is-two-fifths
+                    each post in posts
+                        article.media.post
+                            .media-content
+                                .content
+                                    p.
+                                        #[strong #{ post.user_username }] #[small #{ post.posted }] #[br]
+                                        #{ post.content }
+
+

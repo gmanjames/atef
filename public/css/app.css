@@ -1,1 +1,12 @@
 /* APP */
+
+html {
+    background-color: hsl(0, 0%, 95%);
+}
+
+.post {
+    border-radius: 3px;
+    background-color: hsl(0, 0%, 100%);
+    box-shadow: 0 3px 2px hsl(0, 0%, 30%);
+    padding: 1em;
+}

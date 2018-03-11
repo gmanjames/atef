@@ -1,19 +1,20 @@
 extends layouts/master2018.pug
 
 block content
-
-    .columns.is-centered
-        .column.is-one-third
-            h1 Register
-            form(action="/register", method="POST")
-                .field
-                    label(for="username") username
-                    .control
-                        input.input(type="text" name="username")
-                .field
-                    label(for="password") password
-                    .control
-                        input.input(type="password" name="password")
-                .field
-                    .control
-                        button.button.is-link(type="submit") Submit
+    section.section
+        .container
+            .columns.is-centered
+                .column.is-one-third.content
+                    h1 Register
+                    form(action="/register", method="POST")
+                        .field
+                            label(for="username") username
+                            .control
+                                input.input(type="text" name="username")
+                        .field
+                            label(for="password") password
+                            .control
+                                input.input(type="password" name="password")
+                        .field
+                            .control
+                                button.button.is-link(type="submit") Submit

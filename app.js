@@ -18,7 +18,7 @@ app.use('/public', express.static('./public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 600000 }}));
 
 app.use('/profile', profRoutes);
 
@@ -66,7 +66,7 @@ app.post("/register", (req, res) => {
         if (u) {
             res.send("A user with the name '" + u.username + "' already exists!");
         } else {
-            dao.saveUser(req.body.username, req.body.password).then(results => {
+            dao.saveUser(req.body.username, md5(req.body.password)).then(results => {
                 req.session.username = req.body.username;
                 res.redirect('/profile/home');
             }).catch(errors => {
