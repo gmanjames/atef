@@ -1,5 +1,6 @@
 const express = require('express'),
-      router  = express.Router();
+      router  = express.Router(),
+      dao     = require('../db/access.js');
 
 
 router.use(auth);
@@ -15,6 +16,14 @@ router.get("/logout", (req, res) => {
         } else {
             res.redirect("/");
         }
+    });
+});
+
+router.get("/users", (req, res) => {
+    dao.allUsers().then(results => {
+        res.render("users", { users: results });
+    }).catch(errors => {
+        res.send('An error occurred: ' + errors);
     });
 });
 

@@ -16,7 +16,6 @@ const DEFAULT_PORT = process.env.DEFAULT_PORT;
 
 app.use('/public', express.static('./public'));
 app.use(bodyParser.json());
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));

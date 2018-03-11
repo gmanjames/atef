@@ -37,4 +37,16 @@ dao.saveUser = function(username, password_hash) {
     })
 };
 
+dao.allUsers = function() {
+  return new Promise((resolve, reject) => {
+        con.query("SELECT username FROM user",
+            function (error, results, fields) {
+                if (error) reject(error);
+
+                resolve(results);
+            }
+        )
+    })
+};
+
 module.exports = dao;
