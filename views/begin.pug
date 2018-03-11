@@ -1,8 +1,48 @@
 extends layouts/master2018.pug
 
 block content
+
     h1 Begin
+
+    #beginModel.modal.is-active
+        .modal-background
+        .modal-content
+            .modal-card
+                .modal-card-head
+                    h1.modal-card-title Welcome.
+                .modal-card-body
+                    .content
+                        p.
+                            You are going to be here for a while so you might as well read this.
+                        h2#countdown 
+                .modal-card-foot
 
 block scripts
     script.
         console.log('begin');
+
+        let time_seconds, then, remaining;
+
+        time_seconds = 20;
+        then         = Date.now();
+        remaining    = time_seconds * 1000;
+            
+        function loop() {
+            let id = setTimeout(loop, 0);
+
+            let delta  = Date.now() - then;
+            remaining -= delta 
+            document.getElementById('countdown').innerText = remaining / 1000;
+
+            then = Date.now();
+            if (remaining <= 0) {
+                document.getElementById('beginModel').classList.toggle('is-active');
+                clearTimeout(id);
+            }
+        }
+
+
+        // Set things off
+        loop();
+
+
