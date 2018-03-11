@@ -6,7 +6,8 @@ const express    = require('express'),
       app        = express(),
       dao        = require('./db/access.js'),
       session    = require('express-session'),
-      md5        = require('md5');
+      md5        = require('md5'),
+      sanitizer  = require('sanitizer');
 const bodyParser = require('body-parser')
 
 const profRoutes = require('./routes/profile.js');
@@ -35,10 +36,9 @@ app.get(["/", "/login"], (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    const usrname = req.body.username,
-          passwd  = req.body.password;
+    const usrname = sanitizer.sanitize(req.body.username),
+          passwd  = sanitizer.sanitize(req.body.password);
 
-    console.log('test');
     const str = usrname + ", " + passwd;
 
     dao.findUser(usrname).then((results) => {

@@ -1,6 +1,7 @@
 const express = require('express'),
       router  = express.Router(),
-      dao     = require('../db/access.js');
+      dao     = require('../db/access.js'),
+      sanitizer = require('sanitizer');
 
 
 router.use(auth);
@@ -36,18 +37,24 @@ router.get("/feed", (req, res) => {
 });
 
 router.post("/post", (req, res) => {
-    dao.savePost(req.session.username, req.body.content).then(results => {
-        res.redirect("/profile/feed");
-    }).catch(errors => {
-        res.send('An error occurred: ' + errors);
-    });
+    const content = sanitizer.sanitize(req.body.content);
+
+    if (content) {
+        dao.savePost(req.session.username, sanitizer.sanitize(req.body.content)).then(results => {
+            res.redirect("/profile/feed");
+        }).catch(errors => {
+            res.send('An error occurred: ' + errors);
+        });
+    } else {
+        res.send('Improper use of form');
+    }
 });
 
 
 // MIDDLEWARE
 function auth(req, res, next) {
     if (!req.session.username) {
-        res.render('begin');
+        res.redirect('/');
     } else {
         next();
     }

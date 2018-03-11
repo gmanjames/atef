@@ -68,7 +68,7 @@ dao.savePost = function (username, content) {
 
 dao.allPosts = function () {
   return new Promise((resolve, reject) => {
-        con.query("SELECT * FROM post",
+        con.query("SELECT * FROM post ORDER BY id DESC",
             function (error, results, fields) {
                 if (error) reject(error);
 
