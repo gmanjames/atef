@@ -9,6 +9,8 @@ const express    = require('express'),
       md5        = require('md5');
 const bodyParser = require('body-parser')
 
+const profRoutes = require('./routes/profile.js');
+
 const DEFAULT_PORT = process.env.DEFAULT_PORT;
 
 
@@ -19,25 +21,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
 
+app.use('/profile', profRoutes);
+
 app.set('view engine', 'pug');
 
 
 // APPLICATION ROUTES
+
 app.get(["/", "/login"], (req, res) => {
     if (req.session.username) {
-        res.redirect('/home');
+        res.redirect('/profile/home');
     }
     res.render('begin');
 });
-
-app.get("/home", auth, (req, res) => {
-    res.render('home', { username: req.session.username });
-})
 
 app.post('/login', (req, res) => {
     const usrname = req.body.username,
           passwd  = req.body.password;
 
+    console.log('test');
     const str = usrname + ", " + passwd;
 
     dao.findUser(usrname).then((results) => {
@@ -45,7 +47,7 @@ app.post('/login', (req, res) => {
 
         if (u && u.password === md5(passwd)) {
             req.session.username = u.username;
-            res.redirect('/home');
+            res.redirect('/profile/home');
         } else {
             res.send('Incorrect username or password.');
         }
@@ -53,7 +55,6 @@ app.post('/login', (req, res) => {
         res.send('An error occurred: ' + error);
     });
 });
-
 
 app.get("/register", (req, res) => {
     res.render('register');
@@ -68,7 +69,7 @@ app.post("/register", (req, res) => {
         } else {
             dao.saveUser(req.body.username, req.body.password).then(results => {
                 req.session.username = req.body.username;
-                res.redirect('/home');
+                res.redirect('/profile/home');
             }).catch(errors => {
                 res.send('An error occured: ' + errors);
             });
@@ -77,15 +78,6 @@ app.post("/register", (req, res) => {
         res.send('An error occurred: ' + errors);
     });
 });
-
-// MIDDLEWARE
-function auth(req, res, next) {
-    if (!req.session.username) {
-        res.redirect("/login");
-    } else {
-        next();
-    }
-};
 
 
 // FIRE UP APPLICATION
