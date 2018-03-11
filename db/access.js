@@ -23,6 +23,18 @@ dao.findUser = function(username) {
             }
         )
     })
-}
+};
+
+dao.saveUser = function(username, password_hash) {
+  return new Promise((resolve, reject) => {
+        con.query("INSERT INTO user (username, password) values ('" + username + "', '" + password_hash + "')",
+            function (error, results, fields) {
+                if (error) reject(error);
+
+                resolve(results);
+            }
+        )
+    })
+};
 
 module.exports = dao;
