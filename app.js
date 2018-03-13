@@ -73,7 +73,7 @@ app.post("/register", (req, res) => {
         if (u) {
             res.send("A user with the name '" + u.username + "' already exists!");
         } else {
-            dao.saveUser(req.body.username, md5(req.body.password)).then(results => {
+            dao.saveUser(req.body.username, req.body.email, md5(req.body.password)).then(results => {
                 req.session.username = req.body.username;
                 res.redirect('/app/home');
             }).catch(errors => {

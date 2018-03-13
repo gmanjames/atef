@@ -18,16 +18,36 @@ const nodeMysql  = require('node-mysql'),
 
 const dao = {};
 
+
 // Add models
 db.add(require('../models/post.js'));
 
-dao.findTest = function(cb) {
+dao.allPosts = function(cb) {
+    const Post = db.get('post');
 
-    let Post = db.get('post');
     db.connect(function(conn, cb) {
         cps.seq([
             function(_, cb) {
                 Post.Table.findAll(conn, cb);
+            },
+            function(post, cb) {
+                cb(post);
+            }
+        ], cb);
+    }, cb);
+}
+
+dao.createPost = function(username, content, media, cb) {
+    const Post = db.get('post');
+
+    db.connect(function(conn, cb) {
+        cps.seq([
+            function(_, cb) {
+                Post.Table.create(conn, {
+                    'username' : username,
+                    'content'  : content,
+                    'media'    : media
+                }, cb);
             },
             function(post, cb) {
                 console.log(post);
@@ -68,10 +88,10 @@ dao.findUser = function(username) {
     })
 };
 
-dao.saveUser = function(username, password_hash) {
+dao.saveUser = function(username, email, password_hash) {
   return new Promise((resolve, reject) => {
         const con = connection();
-        con.query("INSERT INTO user (username, password) values ('" + username + "', '" + password_hash + "')",
+        con.query("INSERT INTO user (username, password, email) values ('" + username + "', '" + password_hash + "', '" + email + "')",
             function (error, results, fields) {
                 con.destroy();
                 if (error) reject(error);
@@ -105,20 +125,6 @@ dao.savePost = function (username, content) {
         yyyy = date.getFullYear();
         date_str = yyyy + '-' + mm + '-' + dd;
         con.query("INSERT INTO post (user_username, content, posted) values ('" + username + "', '" + content + "', '" + date_str + "')",
-            function (error, results, fields) {
-                con.destroy();
-                if (error) reject(error);
-
-                resolve(results);
-            }
-        )
-    })
-};
-
-dao.allPosts = function () {
-  return new Promise((resolve, reject) => {
-        const con = connection();
-        con.query("SELECT * FROM post ORDER BY id DESC",
             function (error, results, fields) {
                 con.destroy();
                 if (error) reject(error);
