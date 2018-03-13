@@ -19,18 +19,19 @@ app.use('/public', express.static('./public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 600000 }}));
-
-app.use('/profile', profRoutes);
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 30000 }}));
 
 app.set('view engine', 'pug');
+
+// Apparently important to do this AFTER view engine is set...
+app.use('/app', profRoutes);
 
 
 // APPLICATION ROUTES
 
 app.get(["/", "/login"], (req, res) => {
     if (req.session.username) {
-        res.redirect('/profile/home');
+        res.redirect('/app/home');
     }
     res.render('begin');
 });
@@ -46,7 +47,7 @@ app.post('/login', (req, res) => {
 
         if (u && u.password === md5(passwd)) {
             req.session.username = u.username;
-            res.redirect('/profile/home');
+            res.redirect('/app/home');
         } else {
             res.send('Incorrect username or password.');
         }
@@ -68,7 +69,7 @@ app.post("/register", (req, res) => {
         } else {
             dao.saveUser(req.body.username, md5(req.body.password)).then(results => {
                 req.session.username = req.body.username;
-                res.redirect('/profile/home');
+                res.redirect('/app/home');
             }).catch(errors => {
                 res.send('An error occured: ' + errors);
             });

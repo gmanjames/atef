@@ -41,7 +41,7 @@ router.post("/post", (req, res) => {
 
     if (content) {
         dao.savePost(req.session.username, sanitizer.sanitize(req.body.content)).then(results => {
-            res.redirect("/profile/feed");
+            res.redirect("/feed");
         }).catch(errors => {
             res.send('An error occurred: ' + errors);
         });
@@ -54,7 +54,7 @@ router.post("/post", (req, res) => {
 // MIDDLEWARE
 function auth(req, res, next) {
     if (!req.session.username) {
-        res.redirect('/');
+        res.redirect('/login');
     } else {
         next();
     }
