@@ -1,13 +1,51 @@
+'use strict';
+
 require('dotenv').config();
 
-
-const mysql = require('mysql');
-const opts  = {
+const opts = {
     host :      process.env.DB_HOST,
     user :      process.env.DB_USERNAME,
     password  : process.env.DB_PASSWORD,
     database  : process.env.DB
 };
+
+const nodeMysql   = require('node-mysql'),
+      cps  = require('cps'),
+      DB   = nodeMysql.DB,
+      db   = new DB(opts),
+      BaseRow    = db.Row,
+      BaseTable  = db.Table;
+
+const dao = {};
+
+// Add models
+db.add(require('../models/post.js'))
+    .linkedBy({
+        name  : 'post',
+        key   : 'comment_id',
+        table : 'post_comment'
+    });
+
+dao.findTest = function(cb) {
+
+    let Post = db.get('post');
+    db.connect(function(conn, cb) {
+        cps.seq([
+            function(_, cb) {
+                Post.Table.findAll(conn, cb);
+            },
+            function(posts, cb) {
+                console.log(posts);
+                cb(posts);
+            }
+        ], cb);
+    }, cb);
+}
+
+
+
+
+const mysql = require('mysql');
 
 function connection() {
     return mysql.createConnection({
@@ -19,7 +57,6 @@ function connection() {
     });
 }
 
-const dao = {};
 
 
 dao.findUser = function(username) {

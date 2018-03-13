@@ -36,6 +36,12 @@ app.get(["/", "/login"], (req, res) => {
     res.render('begin');
 });
 
+app.get('/test', (req, res) => {
+    dao.findTest(results => {
+        res.send(results);
+    })
+});
+
 app.post('/login', (req, res) => {
     const usrname = sanitizer.sanitize(req.body.username),
           passwd  = sanitizer.sanitize(req.body.password);
