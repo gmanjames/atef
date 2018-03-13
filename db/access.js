@@ -9,7 +9,7 @@ const opts = {
     database  : process.env.DB
 };
 
-const nodeMysql   = require('node-mysql'),
+const nodeMysql  = require('node-mysql'),
       cps  = require('cps'),
       DB   = nodeMysql.DB,
       db   = new DB(opts),
@@ -19,12 +19,7 @@ const nodeMysql   = require('node-mysql'),
 const dao = {};
 
 // Add models
-db.add(require('../models/post.js'))
-    .linkedBy({
-        name  : 'post',
-        key   : 'comment_id',
-        table : 'post_comment'
-    });
+db.add(require('../models/post.js'));
 
 dao.findTest = function(cb) {
 
@@ -34,9 +29,9 @@ dao.findTest = function(cb) {
             function(_, cb) {
                 Post.Table.findAll(conn, cb);
             },
-            function(posts, cb) {
-                console.log(posts);
-                cb(posts);
+            function(post, cb) {
+                console.log(post);
+                cb(post);
             }
         ], cb);
     }, cb);

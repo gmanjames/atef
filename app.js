@@ -38,7 +38,7 @@ app.get(["/", "/login"], (req, res) => {
 
 app.get('/test', (req, res) => {
     dao.findTest(results => {
-        res.send(results);
+        res.send( '' + results);
     })
 });
 
