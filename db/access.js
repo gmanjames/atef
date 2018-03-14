@@ -1,5 +1,7 @@
 'use strict';
 
+/* TODO: Move towards exporting something like '{Post: ..., User: ... }' */
+
 require('dotenv').config();
 
 const opts = {
@@ -20,7 +22,15 @@ const dao = {};
 
 
 // Add models
-db.add(require('../models/post.js'));
+db.add(require('../models/commentPost.js'));
+db.add(require('../models/post.js'))
+    .relatesTo({
+        "name"     : "comments",
+        "through"  : "comment_post",
+        "table"    : "post",
+        "leftKey"  : "post_id",
+        "rightKey" : "comment_id"
+    });
 
 dao.allPosts = function(cb) {
     const Post = db.get('post');
@@ -28,37 +38,72 @@ dao.allPosts = function(cb) {
     db.connect(function(conn, cb) {
         cps.seq([
             function(_, cb) {
-                Post.Table.findAll(conn, cb);
+                Post.Table.find(conn, 'select * from post where has_replies = 1', cb);
             },
             function(post, cb) {
-                cb(post);
+                cb(null, post);
             }
         ], cb);
     }, cb);
 }
 
-dao.createPost = function(username, content, media, cb) {
+dao.createPost = function(username, content, media, id, has_replies, cb) {
     const Post = db.get('post');
 
     db.connect(function(conn, cb) {
-        cps.seq([
-            function(_, cb) {
-                Post.Table.create(conn, {
-                    'username' : username,
-                    'content'  : content,
-                    'media'    : media
-                }, cb);
+        cps.rescue({
+            'try'   : function() {
+                 cps.seq([
+                    function(_, cb) {
+                        Post.Table.create(conn, {
+                            'username' : username,
+                            'content'  : content,
+                            'media'    : media,
+                            'has_replies' : (parseInt(has_replies) === 0 ? 0 : 1)
+                        }, cb);
+                    },
+                    function(post, cb) {
+                        if (parseInt(has_replies) === 0) {
+                            post.addComment(conn, id, cb);
+                        } else {
+                            cb(null, post);
+                        }
+                    }
+                ], cb);
             },
-            function(post, cb) {
-                console.log(post);
-                cb(post);
+            'catch' : function(err, cb) {
+                cb("catch: " + err, null);
             }
-        ], cb);
+        }, cb);
+    }, cb);
+};
+
+dao.getComments = function(id, cb) {
+    const Post = db.get('post');
+
+    db.connect(function(conn, cb) {
+        cps.rescue({
+            'try'   : function() {
+                 cps.seq([
+                    function(_, cb) {
+                        console.log(id);
+                        Post.Table.findById(conn, id, cb);
+                    },
+                    function(post, cb) {
+                        console.log(post);
+                        post.getComments(conn, cb);
+                    },
+                    function(comments, cb) {
+                        cb(null, comments)
+                    }
+                ], cb);
+            },
+            'catch' : function(err, cb) {
+                cb("catch: " + err, null);
+            }
+        }, cb);
     }, cb);
 }
-
-
-
 
 const mysql = require('mysql');
 

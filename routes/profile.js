@@ -3,6 +3,9 @@ const express = require('express'),
       dao     = require('../db/access.js'),
       sanitizer = require('sanitizer');
 
+const stringifier  = require('stringifier'),
+      stringify    = stringifier({maxDepth: 3});
+
 
 router.use(auth);
 
@@ -29,7 +32,7 @@ router.get("/users", (req, res) => {
 });
 
 router.get("/feed", (req, res) => {
-    dao.allPosts(results => {
+    dao.allPosts((errors, results) => {
         res.render("feed", { posts: results });
     });
 });
@@ -39,17 +42,34 @@ router.post("/post", (req, res) => {
           media   = req.body.media;
 
     if (content) {
-        dao.createPost(req.session.username,
-                        sanitizer.sanitize(req.body.content),
-                        media, function(post) {
-                            console.log(post);
-                            res.redirect("/app/feed");
-                        });
+        dao.createPost(
+            req.session.username,
+            sanitizer.sanitize(req.body.content),
+            media,
+            req.body.id,
+            req.body.has_replies,
+            function(errors, results) {
+                if (errors) {
+                    res.send(errors);
+                } else {
+                    res.redirect("/app/feed");
+                }
+            });
     } else {
         res.send('Improper use of form');
     }
 });
 
+router.get("/getComments", (req, res) => {
+    const postId = req.query.postId;
+    dao.getComments(postId, function(errors, results) {
+        if (errors) {
+            res.send(errors);
+        } else {
+            res.render('partials/post', {comments: results});
+        }
+    });
+});
 
 // MIDDLEWARE
 function auth(req, res, next) {

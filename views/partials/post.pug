@@ -1,0 +1,8 @@
+each comment in comments
+    article.media.comment
+        .media-content
+            .content
+                p.
+                    #[strong #{ comment._data.username }] #[small #{ comment._data.last_updated }] #[br]
+                    #{ comment._data.content }
+                hr

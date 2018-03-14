@@ -19,7 +19,7 @@ app.use('/public', express.static('./public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 30000 }}));
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 600000 }}));
 
 app.set('view engine', 'pug');
 

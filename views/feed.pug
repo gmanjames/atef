@@ -4,13 +4,74 @@ append content
     section.section
         .container
             .columns.is-centered
-                .column.is-two-fifths
+                #posts.column.is-two-fifths
                     each post in posts
                         article.media.post
                             .media-content
                                 .content
                                     p.
-                                        #[strong #{ post.user_username }] #[small #{ post.posted }] #[br]
-                                        #{ post.content }
+                                        #[strong #{ post._data.username }] #[small #{ post._data.last_updated }] #[br]
+                                        #{ post._data.content }
+                                    hr
+                                    nav.level
+                                        .level-left
+                                            a.level-item.get(data-action="reply") reply
+                                            if post._data.has_replies
+                                                a.level-item.get(data-action="view" data-post=post._data.id) view replies
+                                    .comment(style="display: none;")
+                                        form(action="/app/post" method="POST")
+                                            input(type="hidden" name="id" value=post._data.id)
+                                            input(type="hidden" name="has_replies" value="0")
+                                            .field
+                                                .control
+                                                    textarea.textarea(name="content" placeholder="...")
+                                            .field
+                                                .control
+                                                    button.button.is-link.is-small(type="submit") Submit
+            #commentModal.modal
+                .modal-background
+                .modal-content
+                    .modal-card
+                        .modal-card-head
+                            h1.modal-card-title Replies
+                        .modal-card-body
+                            .content
+                                p
+                        .modal-card-foot
+                button.modal-close.is-large(aria-label="close")
+block scripts
+    script.
+        const posts = document.getElementById('posts');
+        const modal = document.getElementById('commentModal');
+        posts.addEventListener('click', evt => {
+            if (evt.target.dataset.action) {
+                const action = evt.target.dataset.action;
+                if (action === 'reply') {
+                    evt.target.parentElement.parentElement.parentElement.querySelector('.comment').style.display = 'block';
+                } else {
+                    getComments(evt.target.dataset.post);
+                }
+            }
+        });
 
+        modal.querySelector('.modal-close').addEventListener('click', evt => {
+            modal.classList.toggle('is-active');
+        });
+
+        function success(dat) {
+            console.log(this.responseText);
+            modal.classList.toggle('is-active');
+            modal.querySelector('.modal-card-body .content p').innerHTML = this.responseText;
+        }
+
+        function getComments(postId) {
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', success);
+            xhr.open('GET', '/app/getComments?postId=' + postId);
+            xhr.send();
+        }
+
+        function createReply() {
+
+        }
 
