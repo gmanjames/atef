@@ -31,7 +31,7 @@ append content
             #commentModal.modal
                 .modal-background
                 .modal-content
-                    .modal-card
+                    .modal-card.modal-comments
                         .modal-card-head
                             h1.modal-card-title Replies
                         .modal-card-body
@@ -39,7 +39,7 @@ append content
                                 p
                         .modal-card-foot
                 button.modal-close.is-large(aria-label="close")
-block scripts
+append scripts
     script.
         const posts = document.getElementById('posts');
         const modal = document.getElementById('commentModal');
