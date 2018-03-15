@@ -21,18 +21,15 @@ block content
                     p Don't have an account? #[a(href="/register") Register]
                 
 
-            #beginModel.modal.is-active
-                .modal-background
-                .modal-content
-                    .modal-card
-                        .modal-card-head
-                            h1.modal-card-title Welcome.
-                        .modal-card-body
-                            .content
-                                p.
-                                    You are going to be here for a while so you might as well read this.
-                                h2#countdown 
-                        .modal-card-foot
+        #beginModel.modal.is-active
+            .modal-background
+            .modal-content
+                .box
+                    h1.title Welcome.
+                    .content
+                        p.
+                            You are going to be here for a while so you might as well read this.
+                        h2#countdown 
 
 block scripts
     script.
@@ -40,7 +37,7 @@ block scripts
 
         let time_seconds, then, remaining;
 
-        time_seconds = 1;
+        time_seconds = 0.5;
         then         = Date.now();
         remaining    = time_seconds * 1000;
             
