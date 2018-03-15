@@ -47,36 +47,30 @@ router.get("/feed", (req, res) => {
 });
 
 router.post("/post", (req, res) => {
-    const content = sanitizer.sanitize(req.body.content),
-          media   = req.body.media;
 
-    if (content) {
-        dao.createPost(
-            req.session.username,
-            sanitizer.sanitize(req.body.content),
-            media,
-            req.body.id,
-            req.body.has_replies,
-            function(errors, results) {
-                if (errors) {
-                    res.send("An error occurred: " + errors);
-                } else {
-                    const msg_str = "Created a new post, '" + results._data.content.substring(0, 10) + "...'";
-                    /* TODO: I am literally selecting an arbitrary user's id...
-                     * THIS IS ONLY FOR TESTING and will need to be changed obvi.
-                     */
-                    eventRepo.save(req.session.username, [1], msg_str, function(errors, results) {
-                        if (errors) {
-                            res.send("An error occurred: " + errors);
-                        } else {
-                            res.redirect("/app/feed");
-                        }
-                    })
-                }
-            })
-    } else {
-        res.send('Improper use of form');
-    }
+    dao.createPost(
+        req.session.username,
+        req.body.content,
+        req.body.media,
+        req.body.id,
+        req.body.has_replies,
+        function(errors, results) {
+            if (errors) {
+                res.send("An error occurred: " + errors);
+            } else {
+                const msg_str = "Created a new post, '" + req.body.content.substring(0, 10) + "...'";
+                /* TODO: I am literally selecting an arbitrary user's id...
+                 * THIS IS ONLY FOR TESTING and will need to be changed obvi.
+                 */
+                eventRepo.save(req.session.username, [1], msg_str, function(errors, results) {
+                    if (errors) {
+                        res.send("An error occurred: " + errors);
+                    } else {
+                        res.redirect("/app/feed");
+                    }
+                })
+            }
+        })
 });
 
 router.get("/getComments", (req, res) => {
