@@ -1,8 +1,9 @@
 const express = require('express'),
       router  = express.Router(),
-      dao     = require('../db/access.js'),
+      dao     = require('../dao/access.js'),
       sanitizer = require('sanitizer');
 
+const eventRepo = require('../dao/eventRepository.js');
 const stringifier  = require('stringifier'),
       stringify    = stringifier({maxDepth: 3});
 
@@ -10,7 +11,13 @@ const stringifier  = require('stringifier'),
 router.use(auth);
 
 router.get("/home", (req, res) => {
-    res.render('home', { username: req.session.username });
+    eventRepo.findAll(function(errors, results) {
+        if (errors) {
+            res.send("An error occurred: " + errors);
+        } else {
+            res.render('home', { username: req.session.username, events: results });
+        }
+    });
 });
 
 router.get("/logout", (req, res) => {
@@ -28,7 +35,6 @@ router.get("/users", (req, res) => {
         if (errors) {
             res.send('An error occured: ' + errors);
         } else {
-            console.log(results);
             res.render("users", { users: results });
         }
     });
@@ -53,11 +59,21 @@ router.post("/post", (req, res) => {
             req.body.has_replies,
             function(errors, results) {
                 if (errors) {
-                    res.send(errors);
+                    res.send("An error occurred: " + errors);
                 } else {
-                    res.redirect("/app/feed");
+                    const msg_str = "Created a new post, '" + results._data.content.substring(0, 10) + "...'";
+                    /* TODO: I am literally selecting an arbitrary user's id...
+                     * THIS IS ONLY FOR TESTING and will need to be changed obvi.
+                     */
+                    eventRepo.save(req.session.username, [1], msg_str, function(errors, results) {
+                        if (errors) {
+                            res.send("An error occurred: " + errors);
+                        } else {
+                            res.redirect("/app/feed");
+                        }
+                    })
                 }
-            });
+            })
     } else {
         res.send('Improper use of form');
     }

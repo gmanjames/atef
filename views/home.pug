@@ -5,12 +5,19 @@ append content
         .container
             .columns.is-centered
                 .column.is-two-thirds
-                    h1.title Hello #{ username }
-                    form(action="/app/post" method="POST")
-                        .field
-                            label(for="content") Post something
-                            .control
-                                textarea.textarea(name="content")
-                        .field
-                            .control
-                                button.button.is-link(type="submit") Submit
+                    section.section.is-small
+                        h1.title Hello #{ username }
+                        form(action="/app/post" method="POST")
+                            .field
+                                label(for="content") Post something
+                                .control
+                                    textarea.textarea(name="content")
+                            .field
+                                .control
+                                    button.button.is-link(type="submit") Submit
+                    section.section
+                        .content
+                            h2 Events
+                            ul
+                                each event in events
+                                    li #[strong #{ event._data.org_name }] - #{ event._data.message } (#[small #{ event._data.date_created }])
