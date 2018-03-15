@@ -29,7 +29,8 @@ block content
                     .content
                         p.
                             You are going to be here for a while so you might as well read this.
-                        h2#countdown 
+                        .timer-box
+                            h2#countdown.time
 
 block scripts
     script.
@@ -37,7 +38,7 @@ block scripts
 
         let time_seconds, then, remaining;
 
-        time_seconds = 0.5;
+        time_seconds = 1000;
         then         = Date.now();
         remaining    = time_seconds * 1000;
             
@@ -46,7 +47,10 @@ block scripts
 
             let delta  = Date.now() - then;
             remaining -= delta 
-            document.getElementById('countdown').innerText = remaining / 1000;
+
+            rm_str = '' + (remaining / 1000)
+            rm_str = rm_str.substring(0, rm_str.length - 2);
+            document.getElementById('countdown').innerText = rm_str;
 
             then = Date.now();
             if (remaining <= 0) {
@@ -54,7 +58,6 @@ block scripts
                 clearTimeout(id);
             }
         }
-
 
         // Set things off
         loop();

@@ -14,3 +14,18 @@ html {
 .modal-card.modal-comments {
     max-height: calc(100vh - 100px);
 }
+
+/* The best pattern ever */
+.timer-box {
+    background-color: hsl(0, 0%, 20%);
+    padding: 8px;
+    border-radius: 5px;
+    display: inline-block;
+    min-width: 200px;
+    margin-right: 10px;
+}
+
+.timer-box > .time {
+    color: hsl(0, 0%, 100%);
+    margin: 0;
+}

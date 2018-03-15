@@ -1,5 +1,4 @@
-const cps  = require('cps');
-
+const cps = require('cps');
 
 module.exports = {
     name : "post",
