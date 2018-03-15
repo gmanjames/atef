@@ -48,17 +48,19 @@ app.post('/login', (req, res) => {
 
     const str = usrname + ", " + passwd;
 
-    dao.findUser(usrname).then((results) => {
-        const u = results[0];
-
-        if (u && u.password === md5(passwd)) {
-            req.session.username = u.username;
-            res.redirect('/app/home');
+    dao.findUser(usrname, function(errors, results) {
+        if (errors) {
+            res.send('An error occurred: ' + error);
         } else {
-            res.send('Incorrect username or password.');
+             const u = results[0];
+
+            if (u && u._data.password === md5(passwd)) {
+                req.session.username = u._data.username;
+                res.redirect('/app/home');
+            } else {
+                res.send('Incorrect username or password.');
+            }
         }
-    }).catch((error) => {
-        res.send('An error occurred: ' + error);
     });
 });
 
@@ -67,22 +69,26 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    dao.findUser(req.body.username).then(results => {
-        const u = results[0];
-
-        if (u) {
-            res.send("A user with the name '" + u.username + "' already exists!");
+    dao.findUser(req.body.username, function(errors, results) {
+        if (errors) {
+            res.send("An error occurred: " + errors);
         } else {
-            dao.saveUser(req.body.username, req.body.email, md5(req.body.password)).then(results => {
-                req.session.username = req.body.username;
-                res.redirect('/app/home');
-            }).catch(errors => {
-                res.send('An error occured: ' + errors);
-            });
+            const u = results[0];
+
+            if (u) {
+                res.send("A user with the name '" + u._data.username + "' already exists!");
+            } else {
+                dao.createUser(req.body.username, req.body.email, md5(req.body.password), function (errors, results) {
+                    if (errors) {
+                        res.send("An error occurred: " + errors);
+                    } else {
+                        req.session.username = req.body.username;
+                        res.redirect('/app/home');
+                    }
+                })
+            }
         }
-    }).catch(errors => {
-        res.send('An error occurred: ' + errors);
-    });
+    })
 });
 
 

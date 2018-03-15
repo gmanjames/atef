@@ -24,10 +24,13 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/users", (req, res) => {
-    dao.allUsers().then(results => {
-        res.render("users", { users: results });
-    }).catch(errors => {
-        res.send('An error occurred: ' + errors);
+    dao.allUsers(function(errors, results) {
+        if (errors) {
+            res.send('An error occured: ' + errors);
+        } else {
+            console.log(results);
+            res.render("users", { users: results });
+        }
     });
 });
 
