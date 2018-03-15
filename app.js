@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const express    = require('express'),
       app        = express(),
-      dao        = require('./db/access.js'),
+      dao        = require('./dao/access.js'),
       session    = require('express-session'),
       md5        = require('md5'),
       sanitizer  = require('sanitizer');

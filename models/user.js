@@ -1,5 +1,6 @@
 const cps = require('cps');
 
 module.exports = {
-    name : "user"
+    name : "user",
+    idFieldName : "username"
 }

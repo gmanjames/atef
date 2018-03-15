@@ -116,7 +116,6 @@ dao.createUser = function(username, email, password_hash, cb) {
                 }, cb);
             },
             function(user, cb) {
-                console.log(user);
                 cb(null, user);
             }
         ], cb);
