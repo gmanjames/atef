@@ -38,7 +38,6 @@ router.get("/users", (req, res) => {
                 if (errors) {
                     res.send('An error occured: ' + errors);
                 } else {
-                    console.log(results);
                     res.render("users", { users: users, subscribed: results });
                 }
             });
@@ -75,7 +74,6 @@ router.post("/post", (req, res) => {
                 }
 
                 msg_str += "\"" + req.body.content.substring(0, 14) + "...\"";
-                console.log(msg_str);
 
                 eventRepo.save(req.session.userId, msg_str, function(errors, results) {
                     if (errors) {
@@ -101,8 +99,7 @@ router.get("/getComments", (req, res) => {
 
 router.post("/unsubscribe", (req, res) => {
     const id = req.body.id;
-    console.log(id + ", " + req.session.userId);
-    eventRepo.unsubscribe(req.session.userId, id, function(errors, results) {
+    eventRepo.unsubscribe(id, req.session.userId, function(errors, results) {
         if (errors) {
             res.send("An error occurred: " + errors);
         } else {
@@ -113,7 +110,7 @@ router.post("/unsubscribe", (req, res) => {
 
 router.post("/subscribe", (req, res) => {
     const id = req.body.id;
-    eventRepo.subscribe(req.session.userId, id, function(errors, results) {
+    eventRepo.subscribe(id, req.session.userId, function(errors, results) {
         if (errors) {
             res.send("An error occurred: " + errors);
         } else {

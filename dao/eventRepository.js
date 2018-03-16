@@ -28,6 +28,13 @@ db.add(require('../models/eventSubscriber.js'));
 
 db.add(require('../models/user.js'))
     .relatesTo({
+        "name"     : "subscribed",
+        "table"    : "user",
+        "through"  : "event_subscriber",
+        "leftKey"  : "sub_id",
+        "rightKey" : "org_id"
+    })
+    .relatesTo({
         'name'     : 'events',
         'table'    : 'event',
         'through'  : 'event_subscriber',
@@ -63,7 +70,7 @@ const findAll = function(cb) {
 };
 
 const findByOrgId = function(id, cb) {
-    let events;
+    const events = [];
     db.connect(function(conn, cb) {
         cps.seq([
             function(_, cb) {
@@ -71,11 +78,26 @@ const findByOrgId = function(id, cb) {
                 User.Table.findById(conn, id, cb);
             },
             function(user, cb) {
-                user.relatesTo(conn, 'events2', cb);
+                user.relatesTo(conn, 'subscribed', cb);
+            },
+            function(users, cb) {
+                cps.peach(
+                users,
+                function(el, cb) {
+                    cps.seq([
+                        function(_, cb) {
+                            Event.Table.find(conn, 'select * from event where org_id = ' + el._data.id, cb);
+                        },
+                        function(results, cb) {
+                            for (let i in results) {
+                                events.push(results[i]);
+                            }
+                            cb(null, results);
+                        }
+                    ], cb);
+                }, cb);
             },
             function(results, cb) {
-                console.log(results);
-                events = results;
                 cb(null, events);
             }
         ], cb);

@@ -27,8 +27,8 @@ db.add(require('../models/user.js'))
         "name"     : "subscribed",
         "through"  : "event_subscriber",
         "table"    : "user",
-        "leftKey"  : "org_id",
-        "rightKey" : "sub_id"
+        "leftKey"  : "sub_id",
+        "rightKey" : "org_id"
     });
 db.add(require('../models/post.js'))
     .relatesTo({
