@@ -20,4 +20,4 @@ append content
                             h2 Events
                             ul
                                 each event in events
-                                    li #[strong #{ event._data.org_name }] - #{ event._data.message } (#[small #{ event._data.date_created }])
+                                    li #[strong (user id: #{ event._data.org_id }]) - #{ event._data.message } (#[small #{ event._data.date_created }])
