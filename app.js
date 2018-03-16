@@ -2,13 +2,13 @@
 
 require('dotenv').config();
 
-const express    = require('express'),
-      app        = express(),
-      dao        = require('./dao/access.js'),
-      session    = require('express-session'),
-      md5        = require('md5'),
-      sanitizer  = require('sanitizer');
-const bodyParser = require('body-parser')
+const express    = require('express');
+const app        = express();
+const dao        = require('./dao/access.js');
+const session    = require('express-session');
+const md5        = require('md5');
+const sanitizer  = require('sanitizer');
+const bodyParser = require('body-parser');
 
 const profRoutes = require('./routes/profile.js');
 
@@ -56,6 +56,7 @@ app.post('/login', (req, res) => {
 
             if (u && u._data.password === md5(passwd)) {
                 req.session.username = u._data.username;
+                req.session.userId   = u._data.id;
                 res.redirect('/app/home');
             } else {
                 res.send('Incorrect username or password.');
@@ -83,6 +84,7 @@ app.post("/register", (req, res) => {
                         res.send("An error occurred: " + errors);
                     } else {
                         req.session.username = req.body.username;
+                        req.session.userId   = results._data.id;
                         res.redirect('/app/home');
                     }
                 })

@@ -1,17 +1,16 @@
-const express = require('express'),
-      router  = express.Router(),
-      dao     = require('../dao/access.js'),
-      sanitizer = require('sanitizer');
-
-const eventRepo = require('../dao/eventRepository.js');
-const stringifier  = require('stringifier'),
-      stringify    = stringifier({maxDepth: 3});
-
+const dao          = require('../dao/access.js');
+const express      = require('express');
+const eventRepo    = require('../dao/eventRepository.js');
+const router       = express.Router();
+const sanitizer    = require('sanitizer');
+const stringifier  = require('stringifier');
+const stringify    = stringifier({maxDepth: 3});
+const bodyParser   = require('body-parser');
 
 router.use(auth);
 
 router.get("/home", (req, res) => {
-    eventRepo.findAll(function(errors, results) {
+    eventRepo.findByOrgId(req.session.userId, function(errors, results) {
         if (errors) {
             res.send("An error occurred: " + errors);
         } else {
@@ -31,11 +30,18 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/users", (req, res) => {
-    dao.allUsers(function(errors, results) {
+    dao.allUsers(function(errors, users) {
         if (errors) {
             res.send('An error occured: ' + errors);
         } else {
-            res.render("users", { users: results });
+            dao.getSubscribed(req.session.userId, function(errors, results) {
+                if (errors) {
+                    res.send('An error occured: ' + errors);
+                } else {
+                    console.log(results);
+                    res.render("users", { users: users, subscribed: results });
+                }
+            });
         }
     });
 });
@@ -54,15 +60,24 @@ router.post("/post", (req, res) => {
         req.body.media,
         req.body.id,
         req.body.has_replies,
+
         function(errors, results) {
             if (errors) {
                 res.send("An error occurred: " + errors);
             } else {
-                const msg_str = "Created a new post, '" + req.body.content.substring(0, 10) + "...'";
-                /* TODO: I am literally selecting an arbitrary user's id...
-                 * THIS IS ONLY FOR TESTING and will need to be changed obvi.
-                 */
-                eventRepo.save(req.session.username, [1], msg_str, function(errors, results) {
+                let post    = results;
+                let msg_str = "";
+
+                if (req.body.has_replies === "0") {
+                    msg_str += "commented, ";
+                } else {
+                    msg_str += "posted, ";
+                }
+
+                msg_str += "\"" + req.body.content.substring(0, 14) + "...\"";
+                console.log(msg_str);
+
+                eventRepo.save(req.session.userId, msg_str, function(errors, results) {
                     if (errors) {
                         res.send("An error occurred: " + errors);
                     } else {
@@ -80,6 +95,29 @@ router.get("/getComments", (req, res) => {
             res.send(errors);
         } else {
             res.render('partials/post', {comments: results});
+        }
+    });
+});
+
+router.post("/unsubscribe", (req, res) => {
+    const id = req.body.id;
+    console.log(id + ", " + req.session.userId);
+    eventRepo.unsubscribe(req.session.userId, id, function(errors, results) {
+        if (errors) {
+            res.send("An error occurred: " + errors);
+        } else {
+            res.send(results);
+        }
+    });
+});
+
+router.post("/subscribe", (req, res) => {
+    const id = req.body.id;
+    eventRepo.subscribe(req.session.userId, id, function(errors, results) {
+        if (errors) {
+            res.send("An error occurred: " + errors);
+        } else {
+            res.send(results);
         }
     });
 });

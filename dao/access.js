@@ -11,17 +11,25 @@ const opts = {
     database  : process.env.DB
 };
 
-const nodeMysql  = require('node-mysql'),
-      cps  = require('cps'),
-      DB   = nodeMysql.DB,
-      db   = new DB(opts);
+const nodeMysql  = require('node-mysql');
+const cps  = require('cps');
+const DB   = nodeMysql.DB;
+const db   = new DB(opts);
 
 const dao = {};
 
+db.add(require('../models/eventSubscriber.js'));
 
-// Add models
 db.add(require('../models/commentPost.js'));
-db.add(require('../models/user.js'));
+
+db.add(require('../models/user.js'))
+    .relatesTo({
+        "name"     : "subscribed",
+        "through"  : "event_subscriber",
+        "table"    : "user",
+        "leftKey"  : "org_id",
+        "rightKey" : "sub_id"
+    });
 db.add(require('../models/post.js'))
     .relatesTo({
         "name"     : "comments",
@@ -134,6 +142,23 @@ dao.allUsers = function(cb) {
                 cb(null, users);
             }
         ], cb);
+    }, cb);
+};
+
+dao.getSubscribed = function(id, cb) {
+    const User = db.get('user');
+    db.connect(function(conn, cb) {
+        cps.seq([
+            function(_, cb) {
+                User.Table.findById(conn, id, cb);
+            },
+            function(user, cb) {
+                user.relatesTo(conn, "subscribed", cb);
+            },
+            function(users, cb) {
+                cb(null, users);
+            }
+        ], cb)
     }, cb);
 };
 
