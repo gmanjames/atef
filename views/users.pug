@@ -9,8 +9,8 @@ append content
                         each user in users
                             tr
                                 td #{ user._data.username }
-                                - let isSub = subscribed.reduce((accum, sub) => accum = (sub._data.username === user._data.username), false);
-                                if isSub
+                                - let isSub = subscribed.reduce((accum, sub) => accum += (sub._data.username === user._data.username), 0);
+                                if isSub > 0
                                     td #[button.is-link.is-medium(data-id=user._data.id data-item="singleton") Unfollow]
                                 else
                                     td #[button.is-link.is-medium(data-id=user._data.id data-item="singleton") Follow]
