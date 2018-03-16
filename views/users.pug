@@ -5,8 +5,46 @@ append content
         .container
             .columns.is-centered
                 .column.is-one-third
-                    ul
+                    table#userTable.table
                         each user in users
-                            li #{ user._data.username }
+                            tr
+                                td #{ user._data.username }
+                                - let isSub = subscribed.reduce((accum, sub) => accum += (sub._data.username === user._data.username), 0);
+                                if isSub > 0
+                                    td #[button.is-link.is-medium(data-id=user._data.id data-item="singleton") Unfollow]
+                                else
+                                    td #[button.is-link.is-medium(data-id=user._data.id data-item="singleton") Follow]
+append scripts
+    script.
+        document.getElementById('userTable').addEventListener('click', evt => {
+            if (evt.target.dataset.item) {
+                const target = evt.target;
+                if (target.innerText === "Unfollow") {
+                    target.innerText = "Follow";
+                    unsubscribe(target.dataset.id);
+                } else {
+                    target.innerText = "Unfollow";
+                    subscribe(target.dataset.id);
+                }
+            }
+        });
 
+        function success(dat) {
+            console.log(this.responseText);
+        }
 
+        function unsubscribe(id) {
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', success);
+            xhr.open('POST', '/app/unsubscribe');
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify({ "id": id }));
+        }
+
+        function subscribe(id) {
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', success);
+            xhr.open('POST', '/app/subscribe');
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify({ "id": id }));
+        }
