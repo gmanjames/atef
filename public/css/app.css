@@ -11,6 +11,15 @@ html {
     padding: 1em;
 }
 
+p#loadMore {
+    text-align: center;
+}
+
+#loadMore {
+    display: block;
+    margin: 0 auto;
+}
+
 .modal-card.modal-comments {
     max-height: calc(100vh - 100px);
 }

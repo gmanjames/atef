@@ -5,8 +5,10 @@ append content
         .container
             .columns.is-centered
                 #posts.column.is-two-fifths
+                    - let count = 0;
                     each post in posts
-                        article.media.post
+                        - count++
+                        article.media.post(class=(count === posts.length - 1 ? "last" : "") data-index=count)
                             .media-content
                                 .content
                                     p.
@@ -28,6 +30,8 @@ append content
                                             .field
                                                 .control
                                                     button.button.is-link.is-small(type="submit") Submit
+            p#loadMore
+                button.button load more
         #commentModal.modal
             .modal-background
             .modal-card
@@ -42,6 +46,16 @@ append scripts
     script.
         const posts = document.getElementById('posts');
         const modal = document.getElementById('commentModal');
+        const load  = document.querySelector('#loadMore button');
+
+        load.addEventListener('click', evt => {
+            const lastIndex = document.querySelector('.last').dataset.index;
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', loadPosts);
+            xhr.open('GET', '/app/getPosts?last_index=' + lastIndex);
+            xhr.send();
+        });
+
         posts.addEventListener('click', evt => {
             if (evt.target.dataset.action) {
                 const action = evt.target.dataset.action;
@@ -56,6 +70,11 @@ append scripts
         modal.querySelector('button.delete').addEventListener('click', evt => {
             modal.classList.toggle('is-active');
         });
+
+        function loadPosts(dat) {
+            console.log(this.responseText);
+            posts.appendChild(this.responseText);
+        }
 
         function success(dat) {
             console.log(this.responseText);
