@@ -61,7 +61,7 @@ router.get("/feed", function(req, res) {
 router.get("/getPosts", (req, res) => {
     const lastIndex = req.query.lastIndex || 0;
     console.log(lastIndex);
-    postRepo.findAllLimit(lastIndex, POST_COUNT, (errors, results) => {
+    postRepo.findAllLimit(parseInt(lastIndex) + 1, POST_COUNT, (errors, results) => {
         if (errors) {
             res.send('An error occurred: ' + errors);
         } else {
