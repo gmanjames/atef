@@ -20,10 +20,6 @@ p#loadMore {
     margin: 0 auto;
 }
 
-.modal-card.modal-comments {
-    max-height: calc(100vh - 100px);
-}
-
 /* The best pattern ever */
 .timer-box {
     background-color: hsl(0, 0%, 20%);

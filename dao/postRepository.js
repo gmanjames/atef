@@ -26,7 +26,7 @@ const findAllLimit = (start_index, limit, cb) => {
     db.connect((conn, cb) => {
         cps.seq([
             (_, cb) => {
-                Post.Table.find(conn, 'select * from post order by id desc limit ' + limit + ' offset ' + start_index, cb);
+                Post.Table.find(conn, 'select * from post where has_replies = 1 order by id desc limit ' + limit + ' offset ' + start_index, cb);
             },
             (results, cb) => {
                 posts = results;
