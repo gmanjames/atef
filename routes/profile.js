@@ -8,7 +8,7 @@ const stringifier  = require('stringifier');
 const stringify    = stringifier({maxDepth: 3});
 const bodyParser   = require('body-parser');
 
-const POST_COUNT = 2;
+const POST_COUNT = 15;
 
 router.use(auth);
 
@@ -60,7 +60,6 @@ router.get("/feed", function(req, res) {
 
 router.get("/getPosts", (req, res) => {
     const lastIndex = req.query.lastIndex || 0;
-    console.log(lastIndex);
     postRepo.findAllLimit(parseInt(lastIndex) + 1, POST_COUNT, (errors, results) => {
         if (errors) {
             res.send('An error occurred: ' + errors);
