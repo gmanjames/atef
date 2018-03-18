@@ -5,15 +5,15 @@ append content
         .container
             .columns.is-centered
                 .column.is-one-third
-                    table#userTable.table
+                    table#userTable.table.is-full-width
                         each user in users
                             tr
                                 td #{ user._data.username }
                                 - let isSub = subscribed.reduce((accum, sub) => accum += (sub._data.username === user._data.username), 0);
                                 if isSub > 0
-                                    td #[button.is-link.is-medium(data-id=user._data.id data-item="singleton") Unfollow]
+                                    td #[button.button.is-info.is-small(data-id=user._data.id data-item="singleton") Unfollow]
                                 else
-                                    td #[button.is-link.is-medium(data-id=user._data.id data-item="singleton") Follow]
+                                    td #[button.button.is-info.is-small(data-id=user._data.id data-item="singleton") Follow]
 append scripts
     script.
         document.getElementById('userTable').addEventListener('click', evt => {

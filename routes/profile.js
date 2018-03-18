@@ -1,11 +1,14 @@
 const dao          = require('../dao/access.js');
 const express      = require('express');
 const eventRepo    = require('../dao/eventRepository.js');
+const postRepo     = require('../dao/postRepository.js');
 const router       = express.Router();
 const sanitizer    = require('sanitizer');
 const stringifier  = require('stringifier');
 const stringify    = stringifier({maxDepth: 3});
 const bodyParser   = require('body-parser');
+
+const POST_COUNT = 15;
 
 router.use(auth);
 
@@ -45,9 +48,24 @@ router.get("/users", (req, res) => {
     });
 });
 
-router.get("/feed", (req, res) => {
-    dao.allPosts((errors, results) => {
-        res.render("feed", { posts: results });
+router.get("/feed", function(req, res) {
+    postRepo.findAllLimit(0, POST_COUNT, (errors, results) => {
+        if (errors) {
+            res.send('An error occurred: ' + errors);
+        } else {
+            res.render("feed", { posts: results, startIndex: 0 });
+        }
+    });
+});
+
+router.get("/getPosts", (req, res) => {
+    const lastIndex = req.query.lastIndex || 0;
+    postRepo.findAllLimit(parseInt(lastIndex) + 1, POST_COUNT, (errors, results) => {
+        if (errors) {
+            res.send('An error occurred: ' + errors);
+        } else {
+            res.render('partials/posts', { posts: results, startIndex: parseInt(lastIndex) + POST_COUNT - 1 });
+        }
     });
 });
 
