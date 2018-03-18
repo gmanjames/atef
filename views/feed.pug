@@ -26,7 +26,6 @@ append scripts
 
         load.addEventListener('click', evt => {
             const lastIndex = document.querySelector('.last').dataset.index;
-            console.log(lastIndex);
 
             // remove .last from this elem
             document.querySelector('.last').classList.toggle('last');
@@ -56,7 +55,6 @@ append scripts
         }
 
         function success(dat) {
-            console.log(this.responseText);
             modal.classList.toggle('is-active');
             modal.querySelector('.modal-card-body .content p').innerHTML = this.responseText;
         }

@@ -15,11 +15,17 @@ module.exports = {
             ], cb);
         },
         addComment: function(conn, id, cb) {
+            var me = this;
             cps.seq([
                 (_, cb) => {
                     conn.query('insert into comment_post (post_id, comment_id) values (' + id + ',' + this.getId() + ')', cb)
                 },
-                (post, cb) => {
+                (results, cb) => {
+                    conn.query('select * from post where id = ' + id, cb);
+                },
+                (results, cb) => {
+                    let post = {};
+                    post._data = results;
                     cb(null, post);
                 }
             ], cb)

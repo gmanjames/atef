@@ -8,7 +8,7 @@ const stringifier  = require('stringifier');
 const stringify    = stringifier({maxDepth: 3});
 const bodyParser   = require('body-parser');
 
-const POST_COUNT = 2;
+const POST_COUNT = 15;
 
 router.use(auth);
 
@@ -18,6 +18,16 @@ router.get("/home", (req, res) => {
             res.send("An error occurred: " + errors);
         } else {
             res.render('home', { username: req.session.username, events: results });
+        }
+    });
+});
+
+router.get("/post/:id", (req, res) => {
+    postRepo.findById(req.params.id, (errors, results) => {
+        if (errors) {
+            res.send("An error occurred: " + errors);
+        } else {
+            res.render('post', { post: results });
         }
     });
 });
@@ -92,10 +102,11 @@ router.post("/post", (req, res) => {
                 }
 
                 msg_str += "\"" + req.body.content.substring(0, 14) + "...\"";
+                msg_str += " <a href=\"/app/post/" + (post._data.id || post._data[0].id) + "\">view</a>";
 
                 eventRepo.save(req.session.userId, msg_str, function(errors, results) {
                     if (errors) {
-                        res.send("An error occurred: " + errors);
+                        res.send("An error occurred: " + errors)
                     } else {
                         res.redirect("/app/feed");
                     }

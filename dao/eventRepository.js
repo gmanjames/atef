@@ -60,6 +60,7 @@ const findAll = function(cb) {
         cps.seq([
             function(_, cb) {
                 Event.Table.findAll(conn, cb);
+                Event.Table.find(conn, 'select * from event order by id desc', cb);
             },
             function(results, cb) {
                 events = results;
@@ -86,10 +87,11 @@ const findByOrgId = function(id, cb) {
                 function(el, cb) {
                     cps.seq([
                         function(_, cb) {
-                            Event.Table.find(conn, 'select * from event where org_id = ' + el._data.id, cb);
+                            Event.Table.find(conn, 'select * from event where org_id = ' + el._data.id + ' order by id desc', cb);
                         },
                         function(results, cb) {
                             for (let i in results) {
+                                results[i]._data.username = el._data.username;
                                 events.push(results[i]);
                             }
                             cb(null, results);

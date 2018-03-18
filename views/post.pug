@@ -1,0 +1,17 @@
+extends layouts/profile.pug
+
+append content
+    section.section
+        .container
+            .columns.is-centered
+                .column.is-one-third
+                    .content
+                        p.
+                            #[strong #{ post.post._data.username }] #[small #{ post.post._data.last_updated }] #[br]
+                            #{ post.post._data.content }
+                        hr
+                        h2 Comments
+                        each comment in post.comments
+                            p.
+                                #[strong #{ comment._data.username }] #[small #{ comment._data.last_updated }] #[br]
+                                #{ comment._data.content }
