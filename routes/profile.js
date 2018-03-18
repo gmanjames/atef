@@ -8,7 +8,7 @@ const stringifier  = require('stringifier');
 const stringify    = stringifier({maxDepth: 3});
 const bodyParser   = require('body-parser');
 
-const POST_COUNT = 15;
+const POST_COUNT = 2;
 
 router.use(auth);
 
