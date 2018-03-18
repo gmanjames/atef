@@ -8,7 +8,7 @@ const stringifier  = require('stringifier');
 const stringify    = stringifier({maxDepth: 3});
 const bodyParser   = require('body-parser');
 
-const POST_COUNT = 15;
+const POST_COUNT = 2;
 
 router.use(auth);
 
@@ -53,20 +53,19 @@ router.get("/feed", function(req, res) {
         if (errors) {
             res.send('An error occurred: ' + errors);
         } else {
-            res.render("feed", { posts: results });
+            res.render("feed", { posts: results, startIndex: 0 });
         }
     });
 });
 
 router.get("/getPosts", (req, res) => {
-    const start_index = req.query.startIndex;
-    console.log(start_index);
-    postRepo.findAllLimit(startIndex, POST_COUNT, (errors, results) => {
+    const lastIndex = req.query.lastIndex || 0;
+    console.log(lastIndex);
+    postRepo.findAllLimit(lastIndex, POST_COUNT, (errors, results) => {
         if (errors) {
             res.send('An error occurred: ' + errors);
         } else {
-            console.log("here");
-            res.render('feed', { posts: results });
+            res.render('partials/posts', { posts: results, startIndex: parseInt(lastIndex) + POST_COUNT - 1 });
         }
     });
 });

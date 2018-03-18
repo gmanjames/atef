@@ -1,0 +1,26 @@
+- let count = startIndex 
+each post in posts
+    - count++
+    article.media.post(class=(count === (posts.length + startIndex) - 1 ? "last" : "") data-index=count)
+        .media-content
+            .content
+                p.
+                    #[strong #{ post._data.username }] #[small #{ post._data.last_updated }] #[br]
+                    #{ post._data.content }
+                hr
+                nav.level
+                    .level-left
+                        a.level-item.get(data-action="reply") reply
+                        if post._data.has_replies
+                            a.level-item.get(data-action="view" data-post=post._data.id) view replies
+                .comment(style="display: none;")
+                    form(action="/app/post" method="POST")
+                        input(type="hidden" name="id" value=post._data.id)
+                        input(type="hidden" name="has_replies" value="0")
+                        .field
+                            .control
+                                textarea.textarea(name="content" placeholder="...")
+                        .field
+                            .control
+                                button.button.is-link.is-small(type="submit") Submit
+
