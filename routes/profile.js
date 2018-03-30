@@ -7,6 +7,7 @@ const sanitizer    = require('sanitizer');
 const stringifier  = require('stringifier');
 const stringify    = stringifier({maxDepth: 3});
 const bodyParser   = require('body-parser');
+const events       = require('../modules/events.js');
 
 const POST_COUNT = 15;
 
@@ -80,31 +81,24 @@ router.get("/getPosts", (req, res) => {
 });
 
 router.post("/post", (req, res) => {
-
     dao.createPost(
         req.session.username,
         req.body.content,
         req.body.media,
         req.body.id,
         req.body.has_replies,
-
         function(errors, results) {
             if (errors) {
                 res.send("An error occurred: " + errors);
             } else {
-                let post    = results;
-                let msg_str = "";
-
+                let msg;
                 if (req.body.has_replies === "0") {
-                    msg_str += "commented, ";
+                    msg = events.getEvent('comment', req.session.username, '...data', '...href');
                 } else {
-                    msg_str += "posted, ";
+                    msg = events.getEvent('post',    req.session.username, '...data', '...href');
                 }
 
-                msg_str += "\"" + req.body.content.substring(0, 14) + "...\"";
-                msg_str += " <a href=\"/app/post/" + (post._data.id || post._data[0].id) + "\">view</a>";
-
-                eventRepo.save(req.session.userId, msg_str, function(errors, results) {
+                eventRepo.save(req.session.userId, msg, function(errors, results) {
                     if (errors) {
                         res.send("An error occurred: " + errors)
                     } else {
