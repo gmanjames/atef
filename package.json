@@ -23,6 +23,8 @@
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "md5": "^2.2.1",
+    "mongodb": "^3.0.5",
+    "mongoose": "^5.0.13",
     "node-mysql": "^0.4.2",
     "pug": "^2.0.1",
     "sanitizer": "^0.1.3",
