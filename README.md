@@ -10,7 +10,7 @@ contributing to this repository soon. Having contributors and other interested p
 is really the only way for it to grow I imagine.  
 
 # Contacts  
-* Garren Ijames ([@gmanjames](https://github.com/gmanjames) - Active developer  
+* Garren Ijames ([@gmanjames](https://github.com/gmanjames)) - Active Developer  
 
 Feel free to send me an email for any questions!  
 [yms1465@gmail.com](mailto:yms1465@gmail.com)
